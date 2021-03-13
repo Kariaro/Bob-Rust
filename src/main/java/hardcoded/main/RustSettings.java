@@ -1,4 +1,4 @@
-package hardcoded.gui;
+package hardcoded.main;
 
 import java.io.File;
 import java.io.FileInputStream;

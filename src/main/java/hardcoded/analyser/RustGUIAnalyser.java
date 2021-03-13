@@ -12,7 +12,7 @@ import java.util.List;
 public class RustGUIAnalyser {
 	private final Robot robot;
 	
-	private List<RColor> colors = new ArrayList<>();
+	protected List<RColor> colors = new ArrayList<>();
 	
 	public RustGUIAnalyser(Robot robot) {
 		this.robot = robot;
@@ -54,12 +54,25 @@ public class RustGUIAnalyser {
 				);
 				
 				if(!colors.contains(color)) {
+					color.index = colors.size();
 					colors.add(color);
 				}
 			}
 		}
 		
 		System.out.println(colors.size() + " unique colors");
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("const colors = [\n");
+		int index = 0;
+		for(RColor col : colors) {
+			sb.append("\t{ x: ").append(col.point.x - 1770).append(", y: ").append(col.point.y - 277)
+			.append(", index: " + (index++))
+			.append(", color: [ ").append(col.color.getRed())
+			.append(", ").append(col.color.getGreen()).append(", ").append(col.color.getBlue()).append(" ] },\n");
+		}
+		sb.append("]");
+		System.out.println(sb.toString());
 		
 		// JOptionPane.showConfirmDialog(null, new JLabel(new ImageIcon(image)), "Is this the color pallete?", JOptionPane.PLAIN_MESSAGE);
 	}
@@ -69,6 +82,12 @@ public class RustGUIAnalyser {
 	 */
 	public Point getFocusPoint() {
 		return point(12, 24);
+	}
+	
+	public Point getColorPreview() {
+		// 1704, 1012
+		// -66, 735
+		return point(-66, 735);
 	}
 	
 	public Point getClearButton() {
@@ -129,10 +148,17 @@ public class RustGUIAnalyser {
 	public static class RColor {
 		private final Color color;
 		private final Point point;
+		private int index;
 		
 		public RColor(Color color, Point point) {
 			this.color = color;
 			this.point = point;
+		}
+		
+		public RColor(Color color, Point point, int index) {
+			this.color = color;
+			this.point = point;
+			this.index = index;
 		}
 		
 		public int hashCode() {
@@ -146,6 +172,10 @@ public class RustGUIAnalyser {
 		
 		public Color getColor() {
 			return color;
+		}
+		
+		public int index() {
+			return index;
 		}
 		
 		public Point getPoint() {

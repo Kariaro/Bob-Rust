@@ -13,6 +13,7 @@ import javax.swing.*;
 public class MenuWidgetTree extends JPanel {
 	private static final long serialVersionUID = 6102348017847998019L;
 	
+	@SuppressWarnings("unused")
 	private final List<ImageWidget> list;
 	private JFileChooser fileChooser;
 	

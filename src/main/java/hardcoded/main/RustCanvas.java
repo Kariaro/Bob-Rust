@@ -1,4 +1,4 @@
-package hardcoded.gui;
+package hardcoded.main;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import hardcoded.main.Area;
 import hardcoded.math.Point2f;
 import hardcoded.widget.ImageStretch;
 

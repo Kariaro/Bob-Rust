@@ -1,4 +1,4 @@
-package hardcoded.gui;
+package hardcoded.main;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -187,6 +187,28 @@ public class RustWindow extends JPanel implements MouseListener, MouseMotionList
 					close.setBorder(null);
 					close.addActionListener((event) -> getParentFrame().dispose());
 					button_panel.add(close, BorderLayout.EAST);
+					
+					{
+						BufferedImage bi = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
+						{ // Exit button
+							Graphics2D g = bi.createGraphics();
+							g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+							// g.setColor(new Color(200, 0, 0));
+							
+							g.setColor(Color.white);
+							g.setStroke(new BasicStroke(1.5f));
+							g.drawLine(6, 6, 14, 14);
+							g.drawLine(14, 6, 6, 14);
+							g.dispose();
+						}
+						
+						try {
+							ImageIO.write(bi, "png", new File("test.png"));
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 				titleBar.add(button_panel, BorderLayout.EAST);
 			}
@@ -325,6 +347,7 @@ public class RustWindow extends JPanel implements MouseListener, MouseMotionList
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		
+		/*
 		if(minified) {
 			g2d.setColor(new Color(30, 30, 30, 100));
 			g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -335,7 +358,7 @@ public class RustWindow extends JPanel implements MouseListener, MouseMotionList
 			} else {
 				g2d.fillRect(0, 0, getWidth(), getHeight());
 			}
-		}
+		}*/
 		
 		if(!minified) {
 			canvas.draw(g);

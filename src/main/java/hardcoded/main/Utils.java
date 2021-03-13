@@ -1,4 +1,4 @@
-package hardcoded.gui;
+package hardcoded.main;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
