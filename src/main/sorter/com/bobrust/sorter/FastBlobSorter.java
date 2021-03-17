@@ -5,15 +5,6 @@ import java.util.*;
 public class FastBlobSorter {
 	
 	public static BlobList sort(BlobList data) {
-		/*
-		{
-			System.out.println("ORIGINAL");
-			debug(data.getList());
-			System.out.println("NEW");
-			debug(list);
-			System.out.println("=".repeat(100));
-		}
-		*/
 		return new BlobList(sort0(data.list()));
 	}
 
@@ -27,33 +18,28 @@ public class FastBlobSorter {
 			list.remove(0);
 		}
 		
-		long start1 = System.nanoTime();
 		/* Recalculate the intersections */ {
 			map.clear();
 			
+			// Takes 200 ms for 8000 shapes
 			for(int i = 0; i < list.size(); i++) {
 				Blob blob = list.get(i);
 				map.put(blob, get_intersections(blob, list, i));
 			}
 		}
-		long time1 = System.nanoTime() - start1;
 		
-		
-		long start2 = System.nanoTime();
+		// Takes 800 ms for 8000 shapes
 		while(!list.isEmpty()) {
 			Blob last = out.get(out.size() - 1);
 			int index = find_best_fast(last.size, last.color, list);
 			out.add(list.remove(index));
 		}
-		long time2 = System.nanoTime() - start2;
-		
-		System.out.printf("Time 1: %.2f ms\n", time1 / 1000000.0);
-		System.out.printf("Time 2: %.2f ms\n", time2 / 1000000.0);
 		
 		map.clear();
 		return out;
 	}
 	
+	// TODO: If we used a linked hash set we could make it even faster
 	private static int find_best_fast(int size, int color, List<Blob> list) {
 		int one_match_index = 0;
 		
@@ -69,6 +55,7 @@ public class FastBlobSorter {
 				// If this code can be optimized we can make this sorter even faster
 				List<Blob> cols = map.get(s);
 				for(int j = 0; j < cols.size(); j++) {
+					// Takes 400 ms for 8000 shapes
 					if(list.contains(cols.get(j))) {
 						break;
 					}
@@ -105,7 +92,6 @@ public class FastBlobSorter {
 	private static List<Blob> get_intersections(Blob blob, List<Blob> list, int length) {
 		// Do not create new instances if not needed
 		List<Blob> result = null;
-		
 		int s2 = blob.size * 2;
 		
 		for(int i = 0; i < length; i++) {

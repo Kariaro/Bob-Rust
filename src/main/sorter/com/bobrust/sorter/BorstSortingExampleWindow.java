@@ -35,11 +35,10 @@ public class BorstSortingExampleWindow extends JFrame {
 				repaint();
 			}
 			
-			public void keyTyped(KeyEvent e) {
-				if(Character.toLowerCase(e.getKeyChar()) == 'u') {
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_U) {
 					refreshBorst();
 				}
-				
 				repaint();
 			}
 		});
@@ -57,7 +56,9 @@ public class BorstSortingExampleWindow extends JFrame {
 			
 			list = new BlobList();
 			
+			int max = shapes;
 			for(BorstShape shape : borst.instructions) {
+				if(max-- < 0) break;
 				list.add(Blob.get(
 					shape.x, shape.y,
 					BlobList.SIZES[shape.size],
