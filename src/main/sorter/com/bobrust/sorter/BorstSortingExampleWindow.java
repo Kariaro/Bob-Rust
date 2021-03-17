@@ -48,7 +48,7 @@ public class BorstSortingExampleWindow extends JFrame {
 		repaint();
 	}
 	
-	private int shapes = 6000;
+	private int shapes = 8000;
 	
 	private void refreshBorst() {
 		try {
@@ -71,11 +71,11 @@ public class BorstSortingExampleWindow extends JFrame {
 		
 		try {
 			long start0 = System.nanoTime();
-			BlobList sorted0 = FastBlobSorterV2.sort(list);
+			BlobList sorted0 = FastBlobSorter.sort(list);
 			long time0 = System.nanoTime() - start0;
 			
 			long start1 = System.nanoTime();
-			BlobList sorted1 = FastBlobSorter.sort(list);
+			BlobList sorted1 = FastBlobSorterBlaze.sort(list);
 			long time1 = System.nanoTime() - start1;
 			
 			sorted = sorted1;
