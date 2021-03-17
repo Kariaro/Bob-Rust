@@ -50,7 +50,7 @@ public class FastBlobSorterBlaze {
 		
 		int idx = 0;
 		// Takes ? ms for 8000 shapes
-		while(++idx < array.length - 1) {
+		while(++idx < array.length) {
 			Blob last = out.get(out.size() - 1).blob;
 			int index = find_best_fast(last.size, last.color, array);
 			Piece next = array[index];

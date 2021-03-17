@@ -65,6 +65,9 @@ public class BorstSortingExampleWindow extends JFrame {
 					shape.color
 				));
 			}
+			
+			shapes = 20000;
+			list = BlobList.populate(20000);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -127,7 +130,7 @@ public class BorstSortingExampleWindow extends JFrame {
 		BlobList data = list;
 		if(data == null) return;
 		
-		shapes = 8000;
+		shapes = 20000;
 		BlobList list0 = list;
 		if(list0 != null) render.draw(g, shapes, BACKGROUND, data);
 		g.translate(512, 0);
