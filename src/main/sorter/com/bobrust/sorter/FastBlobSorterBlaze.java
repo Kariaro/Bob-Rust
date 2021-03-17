@@ -16,35 +16,36 @@ public class FastBlobSorterBlaze {
 	}
 
 	private static Piece[] pieces;
+	private static List<Integer>[] map;
+	
+	@SuppressWarnings("unchecked")
 	public static BlobList sort(BlobList data) {
+		// Init arrays
 		pieces = new Piece[data.size()];
+		map = new List[data.size()];
 		
 		for(int i = 0; i < data.size(); i++) {
 			pieces[i] = new Piece(data.get(i), i);
 		}
 		
-		{
-			List<Piece> list = sort0(pieces.clone());
-			return new BlobList(list.stream().map((x) -> x.blob).collect(Collectors.toList()));
-		}
+		List<Piece> list = sort0(pieces.clone());
+		
+		// Remove references
+		map = null;
+		pieces = null;
+		
+		return new BlobList(list.stream().map((x) -> x.blob).collect(Collectors.toList()));
 	}
 	
-	private static Map<Integer, List<Integer>> map = new HashMap<>();
 	private static List<Piece> sort0(Piece[] array) {
 		List<Piece> out = new ArrayList<>();
-		
-		{
-			out.add(array[0]);
-			array[0] = null;
-		}
+		out.add(array[0]);
+		array[0] = null;
 		
 		/* Recalculate the intersections */ {
-			map.clear();
-			
 			// Takes 200 ms for 8000 shapes
 			for(int i = 1; i < array.length; i++) {
-				Blob blob = array[i].blob;
-				map.put(i, get_intersections(blob, array, i));
+				map[i] = get_intersections(array[i].blob, array, i);
 			}
 		}
 		
@@ -58,8 +59,6 @@ public class FastBlobSorterBlaze {
 			array[index] = null;
 		}
 		
-		map.clear();
-		pieces = null;
 		return out;
 	}
 	
@@ -83,7 +82,7 @@ public class FastBlobSorterBlaze {
 			
 			{
 				// If this code can be optimized we can make this sorter even faster
-				List<Integer> cols = map.get(p.index);
+				List<Integer> cols = map[p.index];
 				for(int j = 0; j < cols.size(); j++) {
 					// Takes ? ms for 8000 shapes
 					if(array[cols.get(j)] != null) {
