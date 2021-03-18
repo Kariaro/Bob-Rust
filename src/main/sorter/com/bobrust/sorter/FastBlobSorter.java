@@ -36,7 +36,6 @@ public class FastBlobSorter {
 		array[0] = null;
 		
 		/* Recalculate the intersections */ {
-			// Takes 200 ms for 8000 shapes
 			for(int i = 1; i < array.length; i++) {
 				map[i] = get_intersections(array[i].blob, array, i);
 			}
