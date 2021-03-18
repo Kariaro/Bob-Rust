@@ -3,7 +3,7 @@ package com.bobrust.sorter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FastBlobSorterBlaze {
+public class FastBlobSorterOld {
 	
 	private static class Piece {
 		final Blob blob;
@@ -58,7 +58,7 @@ public class FastBlobSorterBlaze {
 			out.add(next);
 			array[index] = null;
 		}
-		
+
 		return out;
 	}
 	

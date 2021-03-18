@@ -1,0 +1,21 @@
+Blob files
+
+Header: (8 bytes)
+    0: int magic = 0x42525354, // BRST
+	4: short width,
+	6: short height,
+
+Data:
+	8: Instruction[] instructions,
+
+Instruction:
+	0-3: identifier,
+		// 0: setSize;
+		// 1: setBrush
+		// 2: setOpacity
+		// 3: setColor
+		// 4: drawPoint  (8 bytes after this one)
+		// 5: RESERVED
+		// 6: RESERVED
+		// 7: RESERVED
+	3-7: index,

@@ -52,13 +52,13 @@ public class BorstSortingExampleWindow extends JFrame {
 	
 	private void refreshBorst() {
 		try {
-			BorstData borst = BorstReader.readFile(new File("res/borst/wolf8000.borst"));
+			BorstData borst = BorstReader.readFile(new File("res/borst/aidan8000.borst"));
 			
 			list = new BlobList();
 			
 			int max = shapes;
 			for(BorstShape shape : borst.instructions) {
-				if(max-- < 0) break;
+				if(--max < 0) break;
 				list.add(Blob.get(
 					shape.x, shape.y,
 					BlobList.SIZES[shape.size],
@@ -66,22 +66,24 @@ public class BorstSortingExampleWindow extends JFrame {
 				));
 			}
 			
-			shapes = 20000;
-			list = BlobList.populate(20000);
+			//list = BlobList.populate(80000);
+			shapes = list.size();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
+		Thread thread = new Thread(() -> {
 		try {
 			long start0 = System.nanoTime();
-			BlobList sorted0 = FastBlobSorter.sort(list);
+			BlobList sorted0 = FastBlobSorterOld.sort(list);
 			long time0 = System.nanoTime() - start0;
 			
 			long start1 = System.nanoTime();
-			BlobList sorted1 = FastBlobSorterBlaze.sort(list);
+			BlobList sorted1 = FastBlobSorter.sort(list);
 			long time1 = System.nanoTime() - start1;
 			
-			sorted = sorted1;
+			this.sorted0 = sorted0;
+			this.sorted1 = sorted1;
 			
 			{
 				int a0 = score(list, shapes);
@@ -100,11 +102,21 @@ public class BorstSortingExampleWindow extends JFrame {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		});
+		thread.setDaemon(true);
+		thread.start();
+		
+		try {
+			thread.join();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static final Color BACKGROUND = new Color(0xebeace);
 	private BlobPainter render = new BlobPainter();
-	private BlobList sorted;
+	private BlobList sorted0;
+	private BlobList sorted1;
 	private BlobList list;
 	
 	public String timeStr(int millis) {
@@ -126,16 +138,16 @@ public class BorstSortingExampleWindow extends JFrame {
 		//g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		//g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		
+		shapes = 8000;
 		g.translate(0, 28);
 		BlobList data = list;
 		if(data == null) return;
 		
-		shapes = 20000;
-		BlobList list0 = list;
-		if(list0 != null) render.draw(g, shapes, BACKGROUND, data);
+		BlobList list0 = sorted0;
+		if(list0 != null) render.draw(g, shapes, BACKGROUND, list0);
 		g.translate(512, 0);
 		
-		BlobList list1 = sorted;
+		BlobList list1 = sorted1;
 		if(list1 != null) render.draw(g, shapes, BACKGROUND, list1);
 	}
 	

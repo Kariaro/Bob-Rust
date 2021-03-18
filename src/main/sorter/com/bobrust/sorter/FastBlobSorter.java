@@ -3,69 +3,96 @@ package com.bobrust.sorter;
 import java.util.*;
 
 public class FastBlobSorter {
+	// Average time for the sorting https://www.desmos.com/calculator/tjwldcg72h
 	
-	public static BlobList sort(BlobList data) {
-		return new BlobList(sort0(data.list()));
+	private static class Piece {
+		final Blob blob;
+		final int index;
+		
+		public Piece(Blob blob, int index) {
+			this.blob = blob;
+			this.index = index;
+		}
 	}
 
-	private static Map<Blob, List<Blob>> map = new HashMap<>();
-	private static List<Blob> sort0(List<Blob> original) {
-		List<Blob> list = new ArrayList<>(original);
-		List<Blob> out = new ArrayList<>();
+	private static IntList[] map;
+	public static BlobList sort(BlobList data) {
+		// Init arrays
+		Piece[] pieces = new Piece[data.size()];
+		map = new IntList[data.size()];
 		
-		{
-			out.add(list.get(0));
-			list.remove(0);
+		for(int i = 0; i < data.size(); i++) {
+			pieces[i] = new Piece(data.get(i), i);
 		}
 		
+		BlobList list = new BlobList(sort0(pieces));
+		
+		// Remove references
+		map = null;
+		
+		return list;
+	}
+	
+	private static List<Blob> sort0(Piece[] array) {
+		List<Blob> out = new ArrayList<>(array.length);
+		out.add(array[0].blob);
+		array[0] = null;
+		
 		/* Recalculate the intersections */ {
-			map.clear();
-			
 			// Takes 200 ms for 8000 shapes
-			for(int i = 0; i < list.size(); i++) {
-				Blob blob = list.get(i);
-				map.put(blob, get_intersections(blob, list, i));
+			for(int i = 1; i < array.length; i++) {
+				map[i] = get_intersections(array[i].blob, array, i);
 			}
 		}
 		
-		// Takes 800 ms for 8000 shapes
-		while(!list.isEmpty()) {
-			Blob last = out.get(out.size() - 1);
-			int index = find_best_fast(last.size, last.color, list);
-			out.add(list.remove(index));
+		int start = 1;
+		int i = 0;
+		while(++i < array.length) {
+			Blob last = out.get(i - 1);
+			int index = find_best_fast(last.size, last.color, start, array);
+			out.add(array[index].blob);
+			array[index] = null;
+			
+			// Make the starting point shift place.. Will most of the time half the calculations
+			if(index == start) {
+				for(; start < array.length; start++) {
+					if(array[start] != null) break;
+				}
+			}
 		}
 		
-		map.clear();
 		return out;
 	}
 	
-	// TODO: If we used a linked hash set we could make it even faster
-	private static int find_best_fast(int size, int color, List<Blob> list) {
-		int one_match_index = 0;
+	private static int find_best_fast(int size, int color, int start, Piece[] array) {
+		int one_match_index = -1;
+		int first_non_null = -1;
 		
-		for(int i = 0; i < list.size(); i++) {
-			Blob s = list.get(i);
-			boolean sm = s.size == size;
-			boolean cm = s.color == color;
+		for(int i = start; i < array.length; i++) {
+			Piece p = array[i];
+			if(p == null) continue;
+			
+			if(first_non_null == -1) {
+				first_non_null = i;
+			}
+			
+			boolean sm = p.blob.size == size;
+			boolean cm = p.blob.color == color;
 			
 			// If neither color nor size matches skip.
 			if(!cm && !sm) continue;
 			
 			{
-				// If this code can be optimized we can make this sorter even faster
-				List<Blob> cols = map.get(s);
-				for(int j = 0; j < cols.size(); j++) {
-					// Takes 400 ms for 8000 shapes
-					if(list.contains(cols.get(j))) {
+				IntList cols = map[p.index];
+				while(!cols.isEmpty()) {
+					if(array[cols.get(0)] != null) {
 						break;
 					}
 					
-					// Remove elements to help speed
-					cols.remove(j--);
+					cols.remove(0);
 				}
 				
-				if(!cols.isEmpty()) {
-					// Found collision
+				if(!cols.isEmpty()) { 
 					continue;
 				}
 			}
@@ -75,27 +102,31 @@ public class FastBlobSorter {
 				if(cm) {
 					return i;
 				} else {
-					if(one_match_index == 0) {
+					if(one_match_index == -1) {
 						one_match_index = i;
 					}
 				}
 			} else if(cm) {
-				if(one_match_index == 0) {
+				if(one_match_index == -1) {
 					one_match_index = i;
 				}
 			}
 		}
 		
+		if(one_match_index == -1) {
+			return first_non_null;
+		}
+		
 		return one_match_index;
 	}
 	
-	private static List<Blob> get_intersections(Blob blob, List<Blob> list, int length) {
+	private static IntList get_intersections(Blob blob, Piece[] array, int length) {
 		// Do not create new instances if not needed
-		List<Blob> result = null;
+		IntList result = null;
 		int s2 = blob.size * 2;
 		
-		for(int i = 0; i < length; i++) {
-			Blob s = list.get(i);
+		for(int i = 1; i < length; i++) {
+			Blob s = array[i].blob;
 			int s1 = s.size * 2;
 			
 			// Experimental
@@ -106,14 +137,14 @@ public class FastBlobSorter {
 			int sum = s1 + s2;
 			if(x * x + y * y < sum * sum) {
 				if(result == null) {
-					result = new ArrayList<>();
+					result = new IntList();
 				}
 				
-				result.add(s);
+				result.add(i);
 			}
 		}
 		
-		return result == null ? Collections.emptyList():result;
+		return result == null ? IntList.emptyList():result;
 	}
 	
 	static void debug(List<Blob> list) {
