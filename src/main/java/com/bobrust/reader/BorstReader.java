@@ -29,8 +29,8 @@ public class BorstReader {
 				// Width, Height
 				// x, y
 				list.add(new BorstShape(
-					Float.valueOf(parts[0]),
-					Float.valueOf(parts[1]),
+					Integer.valueOf(parts[0]),
+					Integer.valueOf(parts[1]),
 					Integer.valueOf(parts[2]),
 					Integer.valueOf(parts[3], 16),
 					opacity,

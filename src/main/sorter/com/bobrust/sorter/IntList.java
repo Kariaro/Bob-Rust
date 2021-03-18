@@ -24,11 +24,11 @@ public class IntList {
 	
 	private int[] grow(int length) {
 		int old_length = array.length;
-		if(old_length > 0) {
+		// if(old_length > 0) {
 			return array = Arrays.copyOf(array, Math.max(length - old_length, old_length >> 1) + old_length);
-		} else {
-			return array = new int[Math.max(10, length)];
-		}
+		// } else {
+		// 	return array = new int[Math.max(10, length)];
+		// }
 	}
 	
 	public void add(int value) {

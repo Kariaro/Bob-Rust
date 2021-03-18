@@ -3,20 +3,18 @@ package com.bobrust.sorter;
 import java.awt.Color;
 
 public class Blob {
-	public final float x;
-	public final float y;
+	public final int x;
+	public final int y;
 	public final int size;
 	public final int color;
 	private final int hash;
 	
-	protected Blob(float x, float y, int size, int color) {
+	protected Blob(int x, int y, int size, int color) {
 		this.x = x;
 		this.y = y;
 		this.size = size;
 		this.color = color;
-		this.hash = Float.floatToRawIntBits(x)
-				  ^ Float.floatToRawIntBits(y)
-				  ^ (size + 1) ^ (color + 1);
+		this.hash = (x) | (y << 14) | (((size + 1) ^ (color + 1)) << 28);
 	}
 	
 	private transient Color _to_color;
@@ -33,7 +31,7 @@ public class Blob {
 		return hash;
 	}
 	
-	public static Blob get(float x, float y, int size, int color) {
+	public static Blob get(int x, int y, int size, int color) {
 		return new Blob(x, y, size, color);
 	}
 	

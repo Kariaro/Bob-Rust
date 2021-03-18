@@ -47,8 +47,8 @@ public class BlobList {
 		BlobList list = new BlobList();
 		for(int i = 0; i < length; i++) {
 			list.add(Blob.get(
-				random.nextFloat() * 512,
-				random.nextFloat() * 512,
+				random.nextInt(512),
+				random.nextInt(512),
 				BlobList.SIZES[random.nextInt(BlobList.SIZES.length)],
 				BlobList.COLORS[random.nextInt(BlobList.COLORS.length)]
 			));

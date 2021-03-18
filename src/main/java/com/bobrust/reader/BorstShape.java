@@ -1,14 +1,14 @@
 package com.bobrust.reader;
 
 public class BorstShape {
-	public final float x;
-	public final float y;
+	public final int x;
+	public final int y;
 	public final int size;
 	public final int color;
 	public final int opacity;
 	public final int shape;
 	
-	public BorstShape(float x, float y, int size, int color, int opacity, int shape) {
+	public BorstShape(int x, int y, int size, int color, int opacity, int shape) {
 		this.x = x;
 		this.y = y;
 		this.size = size;

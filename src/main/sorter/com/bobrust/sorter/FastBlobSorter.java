@@ -17,7 +17,6 @@ public class FastBlobSorter {
 
 	private static IntList[] map;
 	public static BlobList sort(BlobList data) {
-		// Init arrays
 		Piece[] pieces = new Piece[data.size()];
 		map = new IntList[data.size()];
 		
@@ -25,17 +24,15 @@ public class FastBlobSorter {
 			pieces[i] = new Piece(data.get(i), i);
 		}
 		
-		BlobList list = new BlobList(sort0(pieces));
-		
-		// Remove references
+		BlobList list = new BlobList(Arrays.asList(sort0(pieces)));
 		map = null;
 		
 		return list;
 	}
 	
-	private static List<Blob> sort0(Piece[] array) {
-		List<Blob> out = new ArrayList<>(array.length);
-		out.add(array[0].blob);
+	private static Blob[] sort0(Piece[] array) {
+		Blob[] out = new Blob[array.length];
+		out[0] = array[0].blob;
 		array[0] = null;
 		
 		/* Recalculate the intersections */ {
@@ -48,9 +45,9 @@ public class FastBlobSorter {
 		int start = 1;
 		int i = 0;
 		while(++i < array.length) {
-			Blob last = out.get(i - 1);
+			Blob last = out[i - 1];
 			int index = find_best_fast(last.size, last.color, start, array);
-			out.add(array[index].blob);
+			out[i] = array[index].blob;
 			array[index] = null;
 			
 			// Make the starting point shift place.. Will most of the time half the calculations
@@ -121,7 +118,6 @@ public class FastBlobSorter {
 	}
 	
 	private static IntList get_intersections(Blob blob, Piece[] array, int length) {
-		// Do not create new instances if not needed
 		IntList result = null;
 		int s2 = blob.size * 2;
 		
@@ -132,8 +128,8 @@ public class FastBlobSorter {
 			// Experimental
 			if(s1 == s2 && s.color == blob.color) continue;
 			
-			float x = s.x - blob.x;
-			float y = s.y - blob.y;
+			int x = s.x - blob.x;
+			int y = s.y - blob.y;
 			int sum = s1 + s2;
 			if(x * x + y * y < sum * sum) {
 				if(result == null) {
@@ -145,21 +141,5 @@ public class FastBlobSorter {
 		}
 		
 		return result == null ? IntList.emptyList():result;
-	}
-	
-	static void debug(List<Blob> list) {
-		Blob last = null;
-		
-		System.out.println("[DEBUG]: Showing the changes of a list");
-		int changes = 2;
-		for(Blob blob : list) {
-			if(last != null) {
-				if(last.size != blob.size) changes++;
-				if(last.color != blob.color) changes++;
-			}
-			last = blob;
-			
-			System.out.printf("  [%4d]: s=%d,\tc=%d\n", changes, blob.size, blob.color);
-		}
 	}
 }

@@ -66,7 +66,7 @@ public class BorstSortingExampleWindow extends JFrame {
 				));
 			}
 			
-			//list = BlobList.populate(80000);
+			list = BlobList.populate(20000);
 			shapes = list.size();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -152,10 +152,12 @@ public class BorstSortingExampleWindow extends JFrame {
 	}
 	
 	public int score(BlobList data) {
+		if(data == null) return 0;
 		return score(data.list(), data.size());
 	}
 	
 	public int score(BlobList data, int shapes) {
+		if(data == null) return 0;
 		return score(data.list(), shapes);
 	}
 	
