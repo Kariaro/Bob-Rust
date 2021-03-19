@@ -36,6 +36,7 @@ public class FastBlobSorter {
 		array[0] = null;
 		
 		/* Recalculate the intersections */ {
+			// TODO: Use quad trees to achieve O(N)
 			for(int i = 1; i < array.length; i++) {
 				map[i] = get_intersections(array[i].blob, array, i);
 			}
@@ -43,6 +44,7 @@ public class FastBlobSorter {
 		
 		int start = 1;
 		int i = 0;
+		// This is O(N^2)
 		while(++i < array.length) {
 			Blob last = out[i - 1];
 			int index = find_best_fast(last.size, last.color, start, array);
@@ -64,6 +66,7 @@ public class FastBlobSorter {
 		int one_match_index = -1;
 		int first_non_null = -1;
 		
+		// If we precalculate this for each piece we could make the sorter O(N)
 		for(int i = start; i < array.length; i++) {
 			Piece p = array[i];
 			if(p == null) continue;
@@ -88,7 +91,7 @@ public class FastBlobSorter {
 					cols.remove(0);
 				}
 				
-				if(!cols.isEmpty()) { 
+				if(!cols.isEmpty()) {
 					continue;
 				}
 			}
@@ -118,11 +121,11 @@ public class FastBlobSorter {
 	
 	private static IntList get_intersections(Blob blob, Piece[] array, int length) {
 		IntList result = null;
-		int s2 = blob.size * 2;
+		int s2 = blob.size;
 		
 		for(int i = 1; i < length; i++) {
 			Blob s = array[i].blob;
-			int s1 = s.size * 2;
+			int s1 = s.size;
 			
 			// Experimental
 			if(s1 == s2 && s.color == blob.color) continue;

@@ -14,9 +14,7 @@ public class BlobPainter {
 		
 		g.setColor(background);
 		g.fillRect(0, 0, 512, 512);
-
-		// g.setColor(Color.black);
-		// g.drawRect(0, 0, 512, 512);
+		
 		for(Blob blob : list.list()) {
 			if(shapes-- <= 0) break;
 			

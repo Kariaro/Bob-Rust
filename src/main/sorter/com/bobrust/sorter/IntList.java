@@ -22,18 +22,26 @@ public class IntList {
 		return array[index];
 	}
 	
+	public IntList clone() {
+		IntList copy = new IntList();
+		copy.addAll(this);
+		return copy;
+	}
+	
 	private int[] grow(int length) {
 		int old_length = array.length;
-		// if(old_length > 0) {
-			return array = Arrays.copyOf(array, Math.max(length - old_length, old_length >> 1) + old_length);
-		// } else {
-		// 	return array = new int[Math.max(10, length)];
-		// }
+		return array = Arrays.copyOf(array, Math.max(length - old_length, old_length >> 1) + old_length);
 	}
 	
 	public void add(int value) {
 		if(size == array.length) array = grow(size + 1);
 		array[size++] = value;
+	}
+	
+	public void addAll(IntList list) {
+		if(size + list.size > array.length) array = grow(size + list.size);
+		System.arraycopy(list.array, 0, array, size, list.size);
+		size = size + list.size;
 	}
 	
 	public void remove(int index) {
@@ -45,6 +53,27 @@ public class IntList {
 		}
 		
 		size = new_size;
+	}
+	
+	public void sort() {
+		Arrays.sort(array, 0, size);
+	}
+	
+	public int[] toArray() {
+		return Arrays.copyOf(array, size);
+	}
+	
+	@Override
+	public String toString() {
+		if(size == 0) return "[]";
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(array[0]);
+		for(int i = 1; i < size; i++) {
+			sb.append(", ").append(array[i]);
+		}
+		
+		return '[' + sb.toString() + ']';
 	}
 	
 	private static final IntList EMPTY_LIST = new IntList() {

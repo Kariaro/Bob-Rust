@@ -43,7 +43,7 @@ public class BlobList {
 	}
 	
 	public static BlobList populate(int length) {
-		Random random = new Random(0);
+		Random random = new Random();
 		BlobList list = new BlobList();
 		for(int i = 0; i < length; i++) {
 			list.add(Blob.get(
